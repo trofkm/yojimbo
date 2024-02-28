@@ -29,7 +29,7 @@
 #include <stdint.h>
 #include <inttypes.h>
 
-#include "shared.h"
+#include "examples/shared.h"
 #include "serialize.h"
 
 using namespace yojimbo;

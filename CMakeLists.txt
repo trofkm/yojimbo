@@ -30,30 +30,32 @@ project(yojimbo LANGUAGES C CXX)
 # deps
 
 
-file(GLOB reliable_sources "${CMAKE_CURRENT_SOURCE_DIR}/reliable/*")
+file(GLOB reliable_sources "libs/reliable/*")
 add_library(reliable STATIC ${reliable_sources})
 set_target_properties(reliable PROPERTIES LINKER_LANGUAGE C)
-target_include_directories(reliable PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/reliable)
+target_include_directories(reliable PUBLIC libs/reliable)
 
-file(GLOB serialize_sources "${CMAKE_CURRENT_SOURCE_DIR}/serialize/*")
+file(GLOB serialize_sources "libs/serialize/*")
 add_library(serialize STATIC ${serialize_sources})
 set_target_properties(serialize PROPERTIES LINKER_LANGUAGE C)
-target_include_directories(serialize PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/serialize)
+target_include_directories(serialize PUBLIC libs/serialize)
 
 
-file(GLOB sodium_sources "${CMAKE_CURRENT_SOURCE_DIR}/sodium/*")
+file(GLOB sodium_sources "thirdparty/sodium/*")
 add_library(sodium STATIC ${sodium_sources})
 set_target_properties(sodium PROPERTIES LINKER_LANGUAGE C)
-target_include_directories(sodium PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/sodium)
+target_include_directories(sodium PUBLIC thirdparty/sodium)
 
-file(GLOB tlsf_sources "${CMAKE_CURRENT_SOURCE_DIR}/tlsf/*")
+file(GLOB tlsf_sources "thirdparty/tlsf/*")
 add_library(tlsf STATIC ${tlsf_sources})
+# TODO: According to initial premake it is okay, but I do not like such directory include
+target_include_directories(tlsf PUBLIC thirdparty)
 set_target_properties(tlsf PROPERTIES LINKER_LANGUAGE C)
 
-file(GLOB netcode_sources "${CMAKE_CURRENT_SOURCE_DIR}/netcode/*")
+file(GLOB netcode_sources "libs/netcode/*")
 add_library(netcode STATIC ${netcode_sources})
 set_target_properties(netcode PROPERTIES LINKER_LANGUAGE C)
-target_include_directories(netcode PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/netcode)
+target_include_directories(netcode PUBLIC libs/netcode)
 target_link_libraries(netcode PRIVATE sodium)
 
 
@@ -75,20 +77,20 @@ if (BUILD_EXAMPLES)
 
     # client-server communication
 
-    add_executable(client client.cpp)
+    add_executable(client examples/client.cpp)
     target_link_libraries(client yojimbo)
 
-    add_executable(server server.cpp)
+    add_executable(server examples/server.cpp)
     target_link_libraries(server yojimbo)
 
     # loopback
 
-    add_executable(loopback loopback.cpp)
+    add_executable(loopback examples/loopback.cpp)
     target_link_libraries(loopback yojimbo)
 
     # soak
 
-    add_executable(soak soak.cpp)
+    add_executable(soak examples/soak.cpp)
     target_link_libraries(soak yojimbo)
 endif ()
 
@@ -100,7 +102,7 @@ if(BUILD_TESTS)
     target_compile_definitions(netcode PUBLIC -DNETCODE_ENABLE_TESTS)
     target_compile_definitions(reliable PUBLIC -DRELIABLE_ENABLE_TESTS)
 
-    add_executable(test_all test.cpp)
+    add_executable(test_all tests/test.cpp)
     target_link_libraries(test_all yojimbo)
 
     add_test(NAME run_all COMMAND test_main)
